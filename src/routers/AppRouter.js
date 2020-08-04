@@ -7,7 +7,8 @@ import { useDispatch } from 'react-redux';
 import { login } from '../actions/authAction';
 import { PrivateRouter } from './PrivateRouter';
 import { PublicRouter } from './PublicRouter';
-import { LoadingScreen } from '../components/ui/LoadingScreen';
+import { startLoadNotes } from '../actions/notesAction';
+//import { LoadingScreen } from '../components/ui/LoadingScreen';
 
 
 export const AppRouter = () => {
@@ -24,6 +25,7 @@ export const AppRouter = () => {
             if (user?.uid) {
                 dispatch(login(user.uid, user.displayName));
                 setisLoginIn(true);
+                dispatch(startLoadNotes(user.uid));
             }
             else {
                 setisLoginIn(false);
@@ -37,12 +39,10 @@ export const AppRouter = () => {
 
     if(checking) {
         return(
-             <LoadingScreen />
+            //  <LoadingScreen />
+            <div>cargando... </div>
         );
     }
-
-
-
     return (
 
         <Router>
