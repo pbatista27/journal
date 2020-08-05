@@ -2,16 +2,22 @@ import React, { useRef, useEffect } from 'react'
 import { NotesAppBar } from './NotesAppBar'
 import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from '../../hooks/useForm';
-import { activeNote } from '../../actions/notesAction';
+import { activeNote, startDeleteNote } from '../../actions/notesAction';
 
 export const NoteScreen = () => {
 
     const {active:note} = useSelector(state => state.notes);
     const dispatch = useDispatch();
 
-    const [inputValues,handChangeInput,reset] = useForm({note});
+    const [inputValues,handChangeInput,reset] = useForm(note);
 
     const activeId =  useRef(note.id);
+
+
+    const handleDeleteNote =  () => {
+        const id = inputValues.id;
+        dispatch( startDeleteNote(id));
+    }
 
 
     useEffect(() => {
@@ -24,18 +30,14 @@ export const NoteScreen = () => {
     }, [note,reset]);
 
     useEffect(() => {
-        console.log(inputValues);
         dispatch( activeNote({...inputValues}) );
 
     }, [inputValues,dispatch]);
 
 
-
-    const {body, title} = inputValues;
-
     return (
-        <div className='note__main-content'> 
-            <NotesAppBar date={note.date} />
+        <div className='note__main-content  animate__animated  animate__fadeIn'> 
+            <NotesAppBar date={inputValues.date} />
 
             <div className='notes__content'>
                 <input
@@ -43,14 +45,14 @@ export const NoteScreen = () => {
                     placeholder='Some awesome title'
                     className='notes__title-input'
                     autoComplete='off'
-                    value={title}
+                    value={inputValues.title}
                     name='title'
                     onChange={handChangeInput}
                 />
                 <textarea 
                     placeholder='what happend today'
                     className='notes__textarea'
-                    value={body}
+                    value={inputValues.body}
                     name='body'
                     onChange={handChangeInput}
                     >
@@ -58,12 +60,19 @@ export const NoteScreen = () => {
 
                 <div className='notes__image'>
                     <img 
-                        src='http://2.bp.blogspot.com/-r_Fe-81ABgY/UTqwvuDJmkI/AAAAAAABsoo/_KgCxjVZfbU/s1600/fotos-de-playas-paradisiacas-palmeras-y-arena-junto-al-mar-azul-5.jpg'
-                        alt='algo'
+                        src={note.url}
+                        alt={note.url}
 
                     />
                 </div>
             </div>
+            <button 
+                className='btn btn-danger' 
+                title='Eliminar'
+                onClick={handleDeleteNote}
+            >
+                <i className='fas fa-trash-alt fa-2x'></i>
+            </button>
         </div>
     )
 }

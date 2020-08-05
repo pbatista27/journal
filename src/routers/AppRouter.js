@@ -8,7 +8,7 @@ import { login } from '../actions/authAction';
 import { PrivateRouter } from './PrivateRouter';
 import { PublicRouter } from './PublicRouter';
 import { startLoadNotes } from '../actions/notesAction';
-//import { LoadingScreen } from '../components/ui/LoadingScreen';
+import { LoadingScreen } from '../components/ui/LoadingScreen';
 
 
 export const AppRouter = () => {
@@ -39,8 +39,7 @@ export const AppRouter = () => {
 
     if(checking) {
         return(
-            //  <LoadingScreen />
-            <div>cargando... </div>
+            <LoadingScreen />
         );
     }
     return (

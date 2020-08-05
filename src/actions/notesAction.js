@@ -1,6 +1,6 @@
 import { types } from '../types/types';
 import Swal from 'sweetalert2';
-import { getNotesService, addNewNoteService, updateNoteService } from '../services/notesService';
+import { getNotesService, addNewNoteService, updateNoteService, fileUploadService, deleteNoteService } from '../services/notesService';
 
 export const startNewNote = () => {
 
@@ -10,7 +10,10 @@ export const startNewNote = () => {
 
             const { uid } = getState().auth;
             const {doc, newNote} = await addNewNoteService(uid);
-            dispatch(activeNote(doc.id, newNote));
+
+            newNote.id = doc.id;
+            dispatch(activeNote(newNote));
+            dispatch(addNewNote(newNote));
 
 
         } catch (error) {
@@ -19,6 +22,13 @@ export const startNewNote = () => {
         };
     };
 };
+
+export const addNewNote = (note) => ({
+    type: types.notesAddNew,
+    payload:{
+         ...note
+    }
+});
 
 
 export const activeNote = (note) => {
@@ -90,3 +100,56 @@ export const updateNote =  (id, note) => {
         }   
     }
 };
+
+export const startUploadFile = (file) => {
+    return async(dispatch, getState) => {
+
+        const {active:activeNote} = getState().notes;
+
+        Swal.fire({
+            title: 'Subiendo Imagen',
+            text: 'Cargando...',
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading();
+            }
+        })
+
+        const url = await fileUploadService(file);
+
+        activeNote.url = url;
+
+        dispatch( startUpdateNote(activeNote));
+
+        Swal.close();
+
+    };
+};
+
+export const startDeleteNote = (id) => {
+    return async(dispatch, getState) => {
+    
+        const uid = getState().auth.uid;
+        try {
+
+            await deleteNoteService(uid,id);
+            dispatch( deleteNote(id));
+
+            Swal.fire('Eliminando Notas', 'Notas Eliminada con exito','success');
+
+        } catch (error) {
+            console.log(error);    
+        }
+
+    };
+};
+
+export const deleteNote = (id) => ({
+    type: types.notesDelete,
+    payload: id
+});
+
+
+export const purgeNotesLogout = () =>({
+    type: types.notesLogoutCleaning,
+}); 

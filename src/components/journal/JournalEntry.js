@@ -5,8 +5,7 @@ import { activeNote } from '../../actions/notesAction';
 
 export const JournalEntry = (note) => {
 
-    const {title, body, date} = note;
-    const url = 'nada';
+    const {title, body, date, url} = note;
 
     const fechaNote = moment(date);
     const dispatch = useDispatch();
@@ -18,7 +17,7 @@ export const JournalEntry = (note) => {
     };
 
     return (
-        <div className='journal__entry pointer' onClick={handlenNote}>
+        <div className='journal__entry pointer animate__animated animate__fadeInDownBig' onClick={handlenNote}>
             {
                 url &&
                 <div
