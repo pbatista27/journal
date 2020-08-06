@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
-import { startUpdateNote, startUploadFile } from '../../actions/notesAction';
+import { startUpdateNote, startUploadFile, startDeleteNote } from '../../actions/notesAction';
 
 
 export const NotesAppBar = ({date}) => {
@@ -21,6 +21,11 @@ export const NotesAppBar = ({date}) => {
             dispatch( startUploadFile(file));
         }
     };
+
+    const handleDeleteNote =  () => {
+        const id = active.id;
+        dispatch( startDeleteNote(id));
+    }
 
 
     const handlePictureUpload = () => {
@@ -43,11 +48,20 @@ export const NotesAppBar = ({date}) => {
 
                 <button 
                     className='btn'
+                    onClick={handleDeleteNote}
+                    title='Eliminar'
+                    >
+                        <i className='fas fa-trash-alt fa-2x'></i>    
+                    </button>
+
+                <button 
+                    className='btn'
                     onClick={handlePictureUpload}
                     title='subir imagen'
                 >
                     <i className='fas fa-image fa-2x'></i> 
                 </button>
+
                 <button 
                 className='btn'
                 onClick = {handleNoteSave}

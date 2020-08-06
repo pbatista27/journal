@@ -1,50 +1,59 @@
-import Swal from 'sweetalert2';
+
 import {types} from '../types/types';
-import {firebase, googleAuthProvider} from '../firebase/firebaseConfig';
 import { startLoading, finishLoading } from './uiAction';
+import { 
+    loginEmailPasswordService, 
+    googleLoginService, 
+    loguotService, 
+    registerUserWithEmailPasswordNameService 
+    } from '../services/authService';
 
 
 export const startLoginEmailPassword = (email, password) =>{
-    return (dispatch) => {
+    return async(dispatch) => {
+        
+        try {
 
-        dispatch(startLoading());
-
-        firebase.auth().signInWithEmailAndPassword(email, password)
-        .then( ({user}) => {
+            dispatch(startLoading());
+            const {user} = await loginEmailPasswordService(email, password);
             dispatch( login(user.uid, user.displayName) );
+            dispatch( finishLoading() );
+
+        } catch (error) {
             dispatch(finishLoading());
-        }).catch(err => {
-            console.log(err);
-            dispatch(finishLoading());
-            Swal.fire('Error', err.message,'error');
-        });
+        }
 
     };
 };
 
 export const startGoogleLogin = () => {
-    return (dispatch) =>{
+    return async(dispatch) =>{
 
-        firebase.auth().signInWithPopup(googleAuthProvider)
-            .then(({user}) => {
-                dispatch( login(user.uid, user.displayName) );
-            });
+        try {
+            
+            const {user} = await  googleLoginService();
+            dispatch( login(user.uid, user.displayName) );
+
+        } catch (error) {
+            
+        }
     };
 };
 
 
 export const startRegisterUserWithEmailPasswordName = (email, password, nombre) => {
-    return (dispatch) => {
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then( async({user}) => {
-            await user.updateProfile({displayName:nombre});
-            dispatch( login(user.uid, user.displayName) );
-            dispatch(finishLoading());
-        }).catch( err => {
-            console.log(err);
-            Swal.fire('Error', err.message,'error');
-        });
+    return async(dispatch) => {
+        const {uid,displayName} = await registerUserWithEmailPasswordNameService(email,password, nombre);
+        dispatch( login(uid,displayName) );
+        dispatch(finishLoading());
     };
+};
+
+export const startLogout = () => {
+    return async(dispatch) => {
+        await loguotService();
+        dispatch( loguot() );
+    }
 };
 
 
@@ -59,12 +68,6 @@ export const login = (uid, displayName) => {
     };
 };
 
-export const startLogout = () => {
-    return async(dispatch) => {
-        await firebase.auth().signOut();
-        dispatch( loguot() );
-    }
-};
 
 export const loguot = () => {
 
