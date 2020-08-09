@@ -6,7 +6,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
  
 ### Demo live del proyecto
 
-https://pmbspbatista271188.github.io/auth/
+https://pmbspbatista271188.github.io/journal/
 
 ## Available Scripts
 
